@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"math/big"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -18,7 +19,9 @@ func main() {
 		output__file = os.Args[2]
 
 		content_file, _ := readFile(input__file)
+
 		tab_string := splitIntoWords(content_file)
+
 		new_string = tab_string
 		for i, world := range tab_string {
 			if containsString(world, "(low,") || world == "(low)" {
@@ -62,6 +65,14 @@ func main() {
 					int_trim--
 				}
 				deleteElement(tab_string, i)
+				deleteElement(tab_string, i)
+
+			} else if world == "(bin)" {
+				tab_string[i-1] = binaryToDecimal(tab_string[i-1])
+				deleteElement(tab_string, i)
+
+			} else if world == "(hex)" {
+				tab_string[i-1], _ = hexToDec(tab_string[i-1])
 				deleteElement(tab_string, i)
 
 			}
@@ -167,4 +178,10 @@ func stringToInt(str string) int {
 func deleteElement(arr []string, index int) []string {
 	// Remove element by appending elements before and after the one to be deleted
 	return append(arr[:index], arr[index+1:]...)
+}
+
+func removeNonWords(text string) string {
+	re := regexp.MustCompile(`(\([^()]*\))|([^a-zA-Z\s]+)`)
+	words := re.ReplaceAllString(text, " ")
+	return strings.TrimSpace(words)
 }
