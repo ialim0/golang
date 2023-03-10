@@ -13,6 +13,7 @@ import (
 func main() {
 	var input__file, output__file, trim string
 	var new_string []string
+	var tr int
 
 	if len(os.Args) == 3 {
 		input__file = os.Args[1]
@@ -22,9 +23,9 @@ func main() {
 
 		tab_string := splitIntoWords(content_file)
 
-		new_string = tab_string
 		for i, world := range tab_string {
 			if containsString(world, "(low,") || world == "(low)" {
+				tr++
 				trim = strings.Trim(tab_string[i+1], ")")
 				int_trim := stringToInt(trim)
 				for nb := int_trim; nb > 0; nb-- {
@@ -37,6 +38,7 @@ func main() {
 				deleteElement(tab_string, i)
 
 			} else if containsString(world, "(cap,") || world == "(cap)" {
+				tr++
 				trim = strings.Trim(tab_string[i+1], ")")
 				int_trim := 0
 				if stringToInt(trim) > 0 {
@@ -56,6 +58,7 @@ func main() {
 				deleteElement(tab_string, i)
 
 			} else if containsString(world, "(up,") || world == "(up)" {
+				tr++
 				trim = strings.Trim(tab_string[i+1], ")")
 				int_trim := stringToInt(trim)
 				for nb := int_trim; nb > 0; nb-- {
@@ -68,14 +71,23 @@ func main() {
 				deleteElement(tab_string, i)
 
 			} else if world == "(bin)" {
+				tr++
 				tab_string[i-1] = binaryToDecimal(tab_string[i-1])
 				deleteElement(tab_string, i)
 
 			} else if world == "(hex)" {
+				tr++
 				tab_string[i-1], _ = hexToDec(tab_string[i-1])
 				deleteElement(tab_string, i)
 
 			}
+
+		}
+
+		c := len(tab_string) - (2 * tr) + 1
+
+		for j := 0; j <= c; j++ {
+			new_string = append(new_string, tab_string[j])
 
 		}
 
@@ -181,7 +193,7 @@ func deleteElement(arr []string, index int) []string {
 }
 
 func removeNonWords(text string) string {
-	re := regexp.MustCompile(`(\([^()]*\))|([^a-zA-Z\s]+)`)
+	re := regexp.MustCompile(`(\([^()]*\))|([^a-zA-Z0123456789\s]+)`)
 	words := re.ReplaceAllString(text, " ")
 	return strings.TrimSpace(words)
 }
