@@ -11,9 +11,12 @@ import (
 )
 
 func main() {
-	var input__file, output__file, trim string
+	var input__file, output__file, trim, stringg string
 	var new_string []string
-	var tr int
+	var tr, ver, c, ce, fin int
+	ver = 0
+	ce = 0
+	fin = 0
 
 	if len(os.Args) == 3 {
 		input__file = os.Args[1]
@@ -22,77 +25,121 @@ func main() {
 		content_file, _ := readFile(input__file)
 
 		tab_string := splitIntoWords(content_file)
+		if containsString(tab_string[len(tab_string)-2], ")") {
+			fin = 1
+
+		}
+		fmt.Println(tab_string)
 
 		for i, world := range tab_string {
-			if containsString(world, "(low,") || world == "(low)" {
-				tr++
-				trim = strings.Trim(tab_string[i+1], ")")
-				int_trim := stringToInt(trim)
-				for nb := int_trim; nb > 0; nb-- {
-					k := 1
-					tab_string[i-nb] = makeLowercase(tab_string[i-nb])
-					k++
-					int_trim--
+
+			if containsString(world, "(low,") || world == "(low)" || containsString(world, "(cap,") || world == "(cap)" || containsString(world, "(up,") || world == "(up)" {
+				ver++
+				if containsString(world, "(low,") || world == "(low)" {
+
+					tr++
+					trim = strings.Trim(tab_string[i+1], ")")
+					int_trim := 0
+					if stringToInt(trim) > 0 {
+						int_trim = stringToInt(trim)
+
+					} else {
+						int_trim = 1
+
+					}
+					for nb := int_trim; nb > 0; nb-- {
+						k := 1
+						tab_string[i-nb] = makeLowercase(tab_string[i-nb])
+						k++
+						int_trim--
+					}
+					deleteElement(tab_string, i)
+					deleteElement(tab_string, i)
+
+				} else if containsString(world, "(cap,") || world == "(cap)" {
+					tr++
+					trim = strings.Trim(tab_string[i+1], ")")
+					int_trim := 0
+					if stringToInt(trim) > 0 {
+						int_trim = stringToInt(trim)
+
+					} else {
+						int_trim = 1
+						ce++
+					}
+
+					for nb := int_trim; nb > 0; nb-- {
+						k := 1
+						tab_string[i-nb] = capitalize(tab_string[i-nb])
+						k++
+						int_trim--
+					}
+					deleteElement(tab_string, i)
+					deleteElement(tab_string, i)
+
+				} else if containsString(world, "(up,") || world == "(up)" {
+					tr++
+					trim = strings.Trim(tab_string[i+1], ")")
+					int_trim := 0
+					if stringToInt(trim) > 0 {
+						int_trim = stringToInt(trim)
+
+					} else {
+						int_trim = 1
+					}
+					for nb := int_trim; nb > 0; nb-- {
+						k := 1
+						tab_string[i-nb] = makeUppercase(tab_string[i-nb])
+						k++
+						int_trim--
+					}
+					deleteElement(tab_string, i)
+					deleteElement(tab_string, i)
+
 				}
-				deleteElement(tab_string, i)
-				deleteElement(tab_string, i)
 
-			} else if containsString(world, "(cap,") || world == "(cap)" {
-				tr++
-				trim = strings.Trim(tab_string[i+1], ")")
-				int_trim := 0
-				if stringToInt(trim) > 0 {
-					int_trim = stringToInt(trim)
+			} else {
 
-				} else {
-					int_trim = 1
+				if world == "(bin)" {
+					tr++
+					tab_string[i-1] = binaryToDecimal(tab_string[i-1])
+					deleteElement(tab_string, i)
+
+				} else if world == "(hex)" {
+					tr++
+					tab_string[i-1], _ = hexToDec(tab_string[i-1])
+					deleteElement(tab_string, i)
+
 				}
-
-				for nb := int_trim; nb > 0; nb-- {
-					k := 1
-					tab_string[i-nb] = capitalize(tab_string[i-nb])
-					k++
-					int_trim--
-				}
-				deleteElement(tab_string, i)
-				deleteElement(tab_string, i)
-
-			} else if containsString(world, "(up,") || world == "(up)" {
-				tr++
-				trim = strings.Trim(tab_string[i+1], ")")
-				int_trim := stringToInt(trim)
-				for nb := int_trim; nb > 0; nb-- {
-					k := 1
-					tab_string[i-nb] = makeUppercase(tab_string[i-nb])
-					k++
-					int_trim--
-				}
-				deleteElement(tab_string, i)
-				deleteElement(tab_string, i)
-
-			} else if world == "(bin)" {
-				tr++
-				tab_string[i-1] = binaryToDecimal(tab_string[i-1])
-				deleteElement(tab_string, i)
-
-			} else if world == "(hex)" {
-				tr++
-				tab_string[i-1], _ = hexToDec(tab_string[i-1])
-				deleteElement(tab_string, i)
 
 			}
 
 		}
+		if tr > 0 {
 
-		c := len(tab_string) - (2 * tr) + 1
+			if ver > 0 {
+				c = len(tab_string) - (2 * tr) - 1
 
-		for j := 0; j <= c; j++ {
-			new_string = append(new_string, tab_string[j])
+			} else {
+				c = len(tab_string) - (2 * tr) + 1
+			}
 
+			for j := 0; j <= c; j++ {
+				new_string = append(new_string, tab_string[j])
+
+			}
+
+			if fin > 0 {
+				stringg = tabbTostring(new_string)
+
+			} else {
+				stringg = tabTostring(new_string)
+			}
+
+		} else {
+			stringg = tabTostring(tab_string)
 		}
 
-		fmt.Println(tab_string)
-		stringg := tabTostring(new_string)
 		fmt.Println(stringg)
 
 		writeToFile(output__file, stringg)
@@ -205,4 +252,24 @@ func tabTostring(words []string) string {
 
 	}
 	return txt
+}
+func tabbTostring(words []string) string {
+	txt := ""
+	for i, str := range words {
+		if i < len(words)-2 {
+			txt = txt + str + " "
+
+		} else {
+			txt = txt + str
+		}
+
+	}
+	return txt
+}
+
+func splitSentenceIntoWords(sentence string) []string {
+	// Split the sentence into words using whitespace as the delimiter
+	words := strings.Fields(sentence)
+
+	return words
 }
