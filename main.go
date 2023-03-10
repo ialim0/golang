@@ -92,9 +92,10 @@ func main() {
 		}
 
 		fmt.Println(tab_string)
-		fmt.Println(new_string)
+		stringg := tabTostring(new_string)
+		fmt.Println(stringg)
 
-		writeToFile(output__file, content_file)
+		writeToFile(output__file, stringg)
 
 	}
 
@@ -196,4 +197,12 @@ func removeNonWords(text string) string {
 	re := regexp.MustCompile(`(\([^()]*\))|([^a-zA-Z0123456789\s]+)`)
 	words := re.ReplaceAllString(text, " ")
 	return strings.TrimSpace(words)
+}
+func tabTostring(words []string) string {
+	txt := ""
+	for _, str := range words {
+		txt = txt + str + " "
+
+	}
+	return txt
 }
