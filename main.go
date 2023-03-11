@@ -247,20 +247,45 @@ func removeNonWords(text string) string {
 }
 func tabTostring(words []string) string {
 	txt := ""
-	for _, str := range words {
-		txt = txt + str + " "
+	for i, _ := range words {
+
+		if i < len(words)-1 && startsWith(words[i+1], ",") {
+
+			txt = txt + words[i]
+		} else if startsWith(words[i], ",") {
+
+			words[i] = getSuffix(words[i], ",")
+
+			txt = txt + "," + " " + words[i] + " "
+
+		} else if i < len(words)-1 && startsWith(words[i+1], ".") {
+
+			txt = txt + words[i]
+		} else if startsWith(words[i], ".") {
+
+			words[i] = getSuffix(words[i], ".")
+
+			txt = txt + "." + " " + words[i] + " "
+
+		} else {
+
+			txt = txt + words[i] + " "
+
+		}
 
 	}
 	return txt
 }
 func tabbTostring(words []string) string {
 	txt := ""
-	for i, str := range words {
+
+	for i, _ := range words {
+
 		if i < len(words)-2 {
-			txt = txt + str + " "
+			txt = txt + words[i] + " "
 
 		} else {
-			txt = txt + str
+			txt = txt + words[i]
 		}
 
 	}
@@ -272,4 +297,17 @@ func splitSentenceIntoWords(sentence string) []string {
 	words := strings.Fields(sentence)
 
 	return words
+}
+
+// start with
+func startsWith(s, prefix string) bool {
+	return len(s) >= len(prefix) && s[0:len(prefix)] == prefix
+}
+
+// Function to get the suffix
+func getSuffix(word string, prefix string) string {
+	if strings.HasPrefix(word, prefix) {
+		return word[len(prefix):]
+	}
+	return ""
 }
