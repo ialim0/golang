@@ -24,12 +24,22 @@ func main() {
 
 		content_file, _ := readFile(input__file)
 
+		if containsString(content_file, "(cap)") {
+			content_file = replaceWord(content_file, "(cap)", "(cap, 1)")
+		}
+		if containsString(content_file, "(low)") {
+			content_file = replaceWord(content_file, "(low)", "(low, 1)")
+		}
+		if containsString(content_file, "(up)") {
+			content_file = replaceWord(content_file, "(up)", "(up, 1)")
+		}
+
 		tab_string := splitIntoWords(content_file)
 		if containsString(tab_string[len(tab_string)-2], ")") {
 			fin = 1
 
 		}
-		fmt.Println(tab_string)
+		//fmt.Println(tab_string)
 
 		for i, world := range tab_string {
 
@@ -96,39 +106,6 @@ func main() {
 					deleteElement(tab_string, i)
 					deleteElement(tab_string, i)
 
-				} else if world == "(up)" {
-					tr++
-
-					tab_string[i-1] = makeUppercase(tab_string[i-1])
-					c := tab_string[i+1]
-					//fmt.Println(c)
-
-					deleteElement(tab_string, i)
-					deleteElement(tab_string, i)
-					tab_string[i-1] = tab_string[i-1] + " " + c
-
-				} else if world == "(low)" {
-					tr++
-
-					tab_string[i-1] = makeLowercase(tab_string[i-1])
-					c := tab_string[i+1]
-					//fmt.Println(c)
-
-					deleteElement(tab_string, i)
-					deleteElement(tab_string, i)
-					tab_string[i-1] = tab_string[i-1] + " " + c
-
-				} else if world == "(cap)" {
-					tr++
-
-					tab_string[i-1] = capitalize(tab_string[i-1])
-					c := tab_string[i+1]
-					//fmt.Println(c)
-
-					deleteElement(tab_string, i)
-					deleteElement(tab_string, i)
-					tab_string[i-1] = tab_string[i-1] + " " + c
-
 				}
 
 			} else {
@@ -173,7 +150,7 @@ func main() {
 			stringg = tabTostring(tab_string)
 		}
 
-		fmt.Println(stringg)
+		//fmt.Println(stringg)
 		if countExpression(stringg, "'") == 2 {
 			stringg = replaceWord(stringg, "' ", "'")
 			stringg = replaceWord(stringg, " '", "'")
