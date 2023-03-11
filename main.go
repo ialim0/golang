@@ -141,6 +141,11 @@ func main() {
 		}
 
 		fmt.Println(stringg)
+		if countExpression(stringg, "'") == 2 {
+			stringg = replaceWord(stringg, "' ", "'")
+			stringg = replaceWord(stringg, " '", "'")
+
+		}
 
 		writeToFile(output__file, stringg)
 
@@ -252,20 +257,55 @@ func tabTostring(words []string) string {
 		if i < len(words)-1 && startsWith(words[i+1], ",") {
 
 			txt = txt + words[i]
-		} else if startsWith(words[i], ",") {
+		} else if startsWith(words[i], ",") && !startsWith(words[i+1], ",") {
 
 			words[i] = getSuffix(words[i], ",")
 
 			txt = txt + "," + " " + words[i] + " "
 
-		} else if i < len(words)-1 && startsWith(words[i+1], ".") {
+		} else if i < len(words)-1 && startsWith(words[i+1], ".") && !startsWith(words[i], "..") {
 
 			txt = txt + words[i]
-		} else if startsWith(words[i], ".") {
+		} else if startsWith(words[i], ".") && !startsWith(words[i], "..") {
 
 			words[i] = getSuffix(words[i], ".")
 
-			txt = txt + "." + " " + words[i] + " "
+			txt = txt + "." + " " + words[i]
+
+		} else if i < len(words)-1 && startsWith(words[i+1], "...") {
+
+			txt = txt + words[i]
+		} else if startsWith(words[i], "...") && !startsWith(words[i+1], "...") {
+
+			words[i] = getSuffix(words[i], "...")
+
+			txt = txt + "..." + " " + words[i] + " "
+
+		} else if i < len(words)-1 && startsWith(words[i+1], ":") {
+
+			txt = txt + words[i]
+		} else if startsWith(words[i], ":") && !startsWith(words[i+1], ":") {
+
+			words[i] = getSuffix(words[i], ":")
+
+			txt = txt + ":" + " " + words[i] + " "
+
+		} else if i == len(words)-1 {
+
+			txt = txt + words[i]
+		} else if startsWith(words[i], "!?") {
+
+			words[i] = getSuffix(words[i], "!?")
+
+			txt = txt + "!?" + " " + words[i] + " "
+
+		} else if words[i] == "a" || words[i] == "A" && i < len(words)-1 {
+			if startsWithVowel(words[i+1]) {
+				txt = txt + words[i] + "n" + " "
+
+			} else {
+				txt = txt + words[i] + " "
+			}
 
 		} else {
 
@@ -289,6 +329,7 @@ func tabbTostring(words []string) string {
 		}
 
 	}
+
 	return txt
 }
 
@@ -310,4 +351,33 @@ func getSuffix(word string, prefix string) string {
 		return word[len(prefix):]
 	}
 	return ""
+}
+
+// Help know if giving instance start with
+func startsWithVowel(word string) bool {
+	vowels := []string{"a", "e", "i", "o", "u", "h"}
+	for _, v := range vowels {
+		if strings.HasPrefix(strings.ToLower(word), v) {
+			return true
+		}
+	}
+	return false
+}
+
+// Function that count how many time a giving expression is in sentence
+func countExpression(sentence string, expression string) int {
+	count := 0
+	words := strings.Split(sentence, " ")
+	for _, word := range words {
+		if strings.Contains(word, expression) {
+			count++
+		}
+	}
+	return count
+}
+
+// Function
+func replaceWord(sentence, oldWord, newWord string) string {
+	// Replace all occurrences of `oldWord` with `newWord` in the `sentence`.
+	return strings.ReplaceAll(sentence, oldWord, newWord)
 }
