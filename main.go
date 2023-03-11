@@ -35,7 +35,7 @@ func main() {
 
 			if containsString(world, "(low,") || world == "(low)" || containsString(world, "(cap,") || world == "(cap)" || containsString(world, "(up,") || world == "(up)" {
 				ver++
-				if containsString(world, "(low,") || world == "(low)" {
+				if containsString(world, "(low,") {
 
 					tr++
 					trim = strings.Trim(tab_string[i+1], ")")
@@ -56,7 +56,7 @@ func main() {
 					deleteElement(tab_string, i)
 					deleteElement(tab_string, i)
 
-				} else if containsString(world, "(cap,") || world == "(cap)" {
+				} else if containsString(world, "(cap,") {
 					tr++
 					trim = strings.Trim(tab_string[i+1], ")")
 					int_trim := 0
@@ -77,7 +77,7 @@ func main() {
 					deleteElement(tab_string, i)
 					deleteElement(tab_string, i)
 
-				} else if containsString(world, "(up,") || world == "(up)" {
+				} else if containsString(world, "(up,") {
 					tr++
 					trim = strings.Trim(tab_string[i+1], ")")
 					int_trim := 0
@@ -95,6 +95,39 @@ func main() {
 					}
 					deleteElement(tab_string, i)
 					deleteElement(tab_string, i)
+
+				} else if world == "(up)" {
+					tr++
+
+					tab_string[i-1] = makeUppercase(tab_string[i-1])
+					c := tab_string[i+1]
+					//fmt.Println(c)
+
+					deleteElement(tab_string, i)
+					deleteElement(tab_string, i)
+					tab_string[i-1] = tab_string[i-1] + " " + c
+
+				} else if world == "(low)" {
+					tr++
+
+					tab_string[i-1] = makeLowercase(tab_string[i-1])
+					c := tab_string[i+1]
+					//fmt.Println(c)
+
+					deleteElement(tab_string, i)
+					deleteElement(tab_string, i)
+					tab_string[i-1] = tab_string[i-1] + " " + c
+
+				} else if world == "(cap)" {
+					tr++
+
+					tab_string[i-1] = capitalize(tab_string[i-1])
+					c := tab_string[i+1]
+					//fmt.Println(c)
+
+					deleteElement(tab_string, i)
+					deleteElement(tab_string, i)
+					tab_string[i-1] = tab_string[i-1] + " " + c
 
 				}
 
@@ -275,7 +308,7 @@ func tabTostring(words []string) string {
 		} else if i < len(words)-1 && startsWith(words[i+1], "...") {
 
 			txt = txt + words[i]
-		} else if startsWith(words[i], "...") && !startsWith(words[i+1], "...") {
+		} else if startsWith(words[i], "...") {
 
 			words[i] = getSuffix(words[i], "...")
 
@@ -291,6 +324,9 @@ func tabTostring(words []string) string {
 			txt = txt + ":" + " " + words[i] + " "
 
 		} else if i == len(words)-1 {
+
+			txt = txt + words[i]
+		} else if i < len(words)-1 && startsWith(words[i+1], "!?") {
 
 			txt = txt + words[i]
 		} else if startsWith(words[i], "!?") {
