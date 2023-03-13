@@ -13,9 +13,9 @@ import (
 func main() {
 	var input__file, output__file, trim, stringg string
 	var new_string []string
-	var tr, ver, c, ce, fin int
+	var tr, ver, c, fin int
 	ver = 0
-	ce = 0
+
 	fin = 0
 
 	if len(os.Args) == 3 {
@@ -43,24 +43,19 @@ func main() {
 
 		for i, world := range tab_string {
 
-			if containsString(world, "(low,") || world == "(low)" || containsString(world, "(cap,") || world == "(cap)" || containsString(world, "(up,") || world == "(up)" {
+			if containsString(world, "(low,") || containsString(world, "(cap,") || containsString(world, "(up,") {
 				ver++
 				if containsString(world, "(low,") {
 
 					tr++
 					trim = strings.Trim(tab_string[i+1], ")")
-					int_trim := 0
-					if stringToInt(trim) > 0 {
-						int_trim = stringToInt(trim)
 
-					} else {
-						int_trim = 1
+					int_trim := stringToInt(trim)
 
-					}
 					for nb := int_trim; nb > 0; nb-- {
-						k := 1
+
 						tab_string[i-nb] = makeLowercase(tab_string[i-nb])
-						k++
+
 						int_trim--
 					}
 					deleteElement(tab_string, i)
@@ -69,19 +64,13 @@ func main() {
 				} else if containsString(world, "(cap,") {
 					tr++
 					trim = strings.Trim(tab_string[i+1], ")")
-					int_trim := 0
-					if stringToInt(trim) > 0 {
-						int_trim = stringToInt(trim)
 
-					} else {
-						int_trim = 1
-						ce++
-					}
+					int_trim := stringToInt(trim)
 
 					for nb := int_trim; nb > 0; nb-- {
-						k := 1
+
 						tab_string[i-nb] = capitalize(tab_string[i-nb])
-						k++
+
 						int_trim--
 					}
 					deleteElement(tab_string, i)
@@ -90,17 +79,13 @@ func main() {
 				} else if containsString(world, "(up,") {
 					tr++
 					trim = strings.Trim(tab_string[i+1], ")")
-					int_trim := 0
-					if stringToInt(trim) > 0 {
-						int_trim = stringToInt(trim)
 
-					} else {
-						int_trim = 1
-					}
+					int_trim := stringToInt(trim)
+
 					for nb := int_trim; nb > 0; nb-- {
-						k := 1
+
 						tab_string[i-nb] = makeUppercase(tab_string[i-nb])
-						k++
+
 						int_trim--
 					}
 					deleteElement(tab_string, i)
@@ -151,7 +136,7 @@ func main() {
 		}
 
 		//fmt.Println(stringg)
-		if countExpression(stringg, "'") == 2 {
+		if countExpression(stringg, "'") >= 2 {
 			stringg = replaceWord(stringg, "' ", "'")
 			stringg = replaceWord(stringg, " '", "'")
 
@@ -160,6 +145,7 @@ func main() {
 		writeToFile(output__file, stringg)
 
 	}
+	fmt.Println(formatText("I was sitting over there ,and ' then BAMM ! ! I was thinking ... You ' were right!?"))
 
 }
 
@@ -255,11 +241,6 @@ func deleteElement(arr []string, index int) []string {
 	return append(arr[:index], arr[index+1:]...)
 }
 
-func removeNonWords(text string) string {
-	re := regexp.MustCompile(`(\([^()]*\))|([^a-zA-Z0123456789\s]+)`)
-	words := re.ReplaceAllString(text, " ")
-	return strings.TrimSpace(words)
-}
 func tabTostring(words []string) string {
 	txt := ""
 	for i, _ := range words {
@@ -393,4 +374,25 @@ func countExpression(sentence string, expression string) int {
 func replaceWord(sentence, oldWord, newWord string) string {
 	// Replace all occurrences of `oldWord` with `newWord` in the `sentence`.
 	return strings.ReplaceAll(sentence, oldWord, newWord)
+}
+
+func formatText(text string) string {
+	// Close punctuations to the previous word and separate with a space
+	pattern := regexp.MustCompile(`\s*([.,!?;:])\s*`)
+	text = pattern.ReplaceAllString(text, "$1 ")
+
+	// Remove extra spaces
+	text = strings.TrimSpace(text)
+	text = strings.ReplaceAll(text, "  ", " ")
+
+	// Format groups of punctuations
+	text = strings.ReplaceAll(text, "...", "...")
+	text = strings.ReplaceAll(text, "!?", "!?")
+	text = strings.ReplaceAll(text, "! !", "!!")
+	text = strings.ReplaceAll(text, "? ?", "??")
+	text = strings.ReplaceAll(text, ". .", "..")
+	text = strings.ReplaceAll(text, "' ", "'")
+	text = strings.ReplaceAll(text, " '", "'")
+
+	return text
 }
